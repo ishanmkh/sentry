@@ -198,50 +198,37 @@ class RuleNode extends React.Component<Props> {
 
   conditionallyRenderHelpfulBanner() {
     const {data, project, organization} = this.props;
-    /**
-     * Would prefer to check if data is of `IssueAlertRuleAction` type, however we can't do typechecking at runtime as
-     * user defined types are erased through transpilation.
-     * Instead, we apply duck typing semantics here.
-     * See: https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
-     */
+    // Can't do typechecking at runtime for data to be of type '...' due to type erasure of user defined types in the
+    // transpilation process.
+    // See: https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
     if (!data?.targetType) {
       return null;
     }
 
     switch (data.targetType) {
-      case MailActionTargetType.IssueOwners:
+      case 'Owners':
         return (
           <ThinAlert type="warning">
             {t('If there are no matching ')}
-            <a
-              href="https://docs.sentry.io/workflow/issue-owners/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <a href="https://docs.sentry.io/workflow/issue-owners/">
               {t('issue owners')}
             </a>
             {t(', ownership is determined by the setting on ')}
             <a
               href={`/settings/${organization.slug}/projects/${project.slug}/ownership/`}
-              rel="noopener noreferrer"
-              target="_blank"
             >
               {t('this page')}
             </a>
             {t('.')}
           </ThinAlert>
         );
-      case MailActionTargetType.Team:
+      case 'Team':
         return null;
-      case MailActionTargetType.Member:
+      case 'Member':
         return (
           <Alert thin type="warning">
             {t('Alerts sent directly to a member override their ')}
-            <a
-              href="/settings/account/notifications"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <a href="/settings/account/notifications">
               {t('personal project alert settings')}
             </a>
             {t('.')}
