@@ -68,7 +68,6 @@ class FeatureManager(object):
         """
         actor = kwargs.pop("actor", None)
         feature = self.get(name, *args, **kwargs)
-
         # Check plugin feature handlers
         rv = self._get_plugin_value(feature, actor)
         if rv is not None:

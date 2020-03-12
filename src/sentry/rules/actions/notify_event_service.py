@@ -101,18 +101,15 @@ class NotifyEventServiceAction(EventAction):
         for plugin in plugins.for_project(self.project, version=1):
             if not isinstance(plugin, NotificationPlugin):
                 continue
-
             if features.has(
                 "organizations:issue-alerts-targeting", self.project.organization
             ) and isinstance(plugin, MailPlugin):
                 continue
 
             results.append(PluginService(plugin))
-
         for plugin in plugins.for_project(self.project, version=2):
             for notifier in safe_execute(plugin.get_notifiers, _with_transaction=False) or ():
                 results.append(PluginService(notifier))
-
         return results
 
     def get_services(self):

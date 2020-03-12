@@ -1,9 +1,11 @@
 from __future__ import absolute_import
 
+from rest_framework.response import Response
 
 from sentry.api.bases.project import ProjectEndpoint, StrictProjectPermission
 from sentry.rules import rules
-from rest_framework.response import Response
+from sentry.rules.actions.notify_event_service import NotifyEventServiceAction
+from sentry import features
 
 
 class ProjectRulesConfigurationEndpoint(ProjectEndpoint):
@@ -25,6 +27,9 @@ class ProjectRulesConfigurationEndpoint(ProjectEndpoint):
             if hasattr(node, "form_fields"):
                 context["formFields"] = node.form_fields
 
+            if features.has(
+                "organizations:issue-alerts-targeting", project.organization
+            ) and isinstance(node, NotifyEventServiceAction)
             if rule_type.startswith("condition/"):
                 condition_list.append(context)
             elif rule_type.startswith("action/"):
